@@ -1,8 +1,10 @@
 package com.gestao.impressorasAPI.entity;
 
 
+import com.gestao.impressorasAPI.dto.EnderecoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class InstalacaoEntity {
 
     @Id
@@ -26,7 +29,7 @@ public class InstalacaoEntity {
     private String localInstalacao;
 
     @Embedded
-    private EnderecoEntity endereco;
+    private EnderecoDTO endereco;
 
     private String transformador;
 

@@ -3,17 +3,20 @@ package com.gestao.impressorasAPI.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gestao.impressorasAPI.entity.ImpressoraEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 
 import java.time.LocalDate;
 
+@Builder
 public record InstalacaoDTO(
 
         @NotNull(message = "Item do pedido é obrigatório")
-        Long itemPedido,
+        Integer itemPedido,
 
         @NotBlank(message = "Local de instalação é obrigatório")
         String localInstalacao,
@@ -45,6 +48,9 @@ public record InstalacaoDTO(
         LocalDate dataRetirada,
 
         @NotNull(message = "Informe o contador de retirada da impressora")
-        Integer contadorRetirada
+        Integer contadorRetirada,
+
+        @NotNull(message = "Informe o ID do tipo de impressora que será instalada!")
+        Long id_impressora
 ) {
 }
