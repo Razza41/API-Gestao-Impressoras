@@ -22,4 +22,7 @@ public class ImpressoraEntity {
     @Column(nullable = false)
     private String marcaModelo;
 
+    @Column(nullable = false, unique = true)
+    private String numeroSerie;
+
 }

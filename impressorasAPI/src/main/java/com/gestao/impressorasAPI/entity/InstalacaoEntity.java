@@ -56,10 +56,6 @@ public class InstalacaoEntity {
     // -------------------------------------------------------------
 
     @ManyToOne(fetch = FetchType.LAZY) //evita carregar uma impressora sempre que houver um instalação
-    @JoinColumn(
-            name = "id_impressora",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_instalacao_impressora")
-    )
+    @JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "fk_instalacao_impressora"))
     private ImpressoraEntity impressora;
 }

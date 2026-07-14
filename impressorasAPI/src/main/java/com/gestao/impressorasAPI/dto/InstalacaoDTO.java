@@ -1,6 +1,7 @@
 package com.gestao.impressorasAPI.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gestao.impressorasAPI.entity.ImpressoraEntity;
@@ -34,16 +35,12 @@ public record InstalacaoDTO(
         @NotBlank(message = "Informe o IP/Rede da impressora")
         String ip,
 
-        @JsonSerialize(using = com.gestao.impressorasAPI.jackson.DataConversor.LocalDateSerializer.class) //recebe a data em formato JSON (ex: 01/01/2026)
-        @JsonDeserialize(using = com.gestao.impressorasAPI.jackson.DataConversor.LocalDateDeserializer.class) //passa para o formato LocalDate 2026-01-01
         @NotNull(message = "Informe a data de instalação")
         LocalDate dataInstalacao,
 
         @NotNull(message = "Informe o contador atual da impressora")
         Integer contadorInstalacao,
 
-        @JsonSerialize(using = com.gestao.impressorasAPI.jackson.DataConversor.LocalDateSerializer.class)
-        @JsonDeserialize(using = com.gestao.impressorasAPI.jackson.DataConversor.LocalDateDeserializer.class)
         @NotNull(message = "Informe a data de retirada")
         LocalDate dataRetirada,
 
