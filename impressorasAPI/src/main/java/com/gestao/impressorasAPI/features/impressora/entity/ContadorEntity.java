@@ -42,12 +42,5 @@ public class ContadorEntity {
     @NotNull(message = "Impressora nÃ£o pode ser nula")
     private ImpressoraEntity impressora;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime dataCriacao;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime dataAtualizacao;
 
 }

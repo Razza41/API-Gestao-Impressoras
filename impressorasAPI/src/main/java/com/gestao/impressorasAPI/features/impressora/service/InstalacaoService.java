@@ -43,6 +43,7 @@ public class InstalacaoService {
         instalacao.setContadorInstalacao(instalacaoDTO.contadorInstalacao());
         instalacao.setDataRetirada(instalacaoDTO.dataRetirada());
         instalacao.setContadorRetirada(instalacaoDTO.contadorRetirada());
+
         //PRECISO SETTAR O ID DE IMPRESSORA
         return instalacaoRepository.save(instalacao);
     }
