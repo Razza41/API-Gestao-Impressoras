@@ -13,15 +13,16 @@ public interface ContadorMapper {
 
     ContadorMapper INSTANCE = Mappers.getMapper(ContadorMapper.class);
 
-    // Converte RequestDTO para Entity (com data automática)
+    // 👇 Request + Impressora → Entity (data automática)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataLeitura", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "impressora", source = "impressora")
     ContadorEntity toEntity(ContadorRequestDTO dto, ImpressoraEntity impressora);
 
-    // Converte Entity para ResponseDTO
-    @Mapping(target = "impressoraId", source = "impressora.id")
-    @Mapping(target = "marcaModelo", source = "impressora.marcaModelo")
-    @Mapping(target = "numeroSerie", source = "impressora.numeroSerie")
+    // 👇 Entity → Response (SEM impressora)
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "contadorPB", source = "contadorPB")
+    @Mapping(target = "contadorColor", source = "contadorColor")
+    @Mapping(target = "dataLeitura", source = "dataLeitura")
     ContadorResponseDTO toResponseDTO(ContadorEntity entity);
 }

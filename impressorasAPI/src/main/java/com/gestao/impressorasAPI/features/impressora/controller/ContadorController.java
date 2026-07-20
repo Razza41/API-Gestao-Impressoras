@@ -18,20 +18,17 @@ public class ContadorController {
     private final ContadorService service;
 
     @PostMapping
-    public ResponseEntity<ContadorResponseDTO> postContador(@Valid @RequestBody ContadorRequestDTO contadorRequest) {
-        ContadorResponseDTO contador = service.cadastrarContador(contadorRequest);
-        return ResponseEntity.ok(contador);
+    public ResponseEntity<ContadorResponseDTO> post(@Valid @RequestBody ContadorRequestDTO dto) {
+        return ResponseEntity.ok(service.cadastrar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<ContadorResponseDTO>> getAllContadores() {
-        List<ContadorResponseDTO> lista = service.listarTodosContadores();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<ContadorResponseDTO>> getAll() {
+        return ResponseEntity.ok(service.listarTodos());
     }
 
     @GetMapping("/impressora/{impressoraId}")
-    public ResponseEntity<ContadorResponseDTO> getContadorByImpressora(@PathVariable Long impressoraId) {
-        ContadorResponseDTO contador = service.buscarContadorPorImpressora(impressoraId);
-        return ResponseEntity.ok(contador);
+    public ResponseEntity<ContadorResponseDTO> getByImpressora(@PathVariable Long impressoraId) {
+        return ResponseEntity.ok(service.buscarPorImpressoraId(impressoraId));
     }
 }

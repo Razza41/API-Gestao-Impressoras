@@ -1,6 +1,5 @@
 package com.gestao.impressorasAPI.features.impressora.mapper;
 
-import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoDTO;
 import com.gestao.impressorasAPI.features.impressora.entity.InstalacaoEntity;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;

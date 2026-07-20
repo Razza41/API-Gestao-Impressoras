@@ -1,10 +1,10 @@
 package com.gestao.impressorasAPI.features.impressora.service;
 
-import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoDTO;
+import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoRequestDTO;
+import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoResponseDTO;
 import com.gestao.impressorasAPI.features.impressora.entity.ImpressoraEntity;
 import com.gestao.impressorasAPI.features.impressora.entity.InstalacaoEntity;
 import com.gestao.impressorasAPI.features.impressora.mapper.InstalacaoMapper;
-import com.gestao.impressorasAPI.features.impressora.repository.ImpressoraRepository;
 import com.gestao.impressorasAPI.features.impressora.repository.InstalacaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,66 +17,69 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InstalacaoService {
 
-    private final ImpressoraRepository impressoraRepository;
     private final InstalacaoRepository instalacaoRepository;
+    private final ImpressoraService impressoraService;
     private final InstalacaoMapper mapper;
 
     @Transactional
-    public InstalacaoEntity cadastrarInstalacao(InstalacaoDTO instalacaoDTO) {
-        // 1. Buscar a impressora
-        ImpressoraEntity impressora = impressoraRepository.findById(instalacaoDTO.idImpressora())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Impressora com ID " + instalacaoDTO.idImpressora() + " não encontrada"
-                ));
+    public InstalacaoResponseDTO cadastrar(InstalacaoRequestDTO dto) {
+        // 1. Buscar impressora
+        ImpressoraEntity impressora = impressoraService.buscarEntityPorId(dto.idImpressora());
 
-        // 2. Converter DTO para Entity
-        InstalacaoEntity instalacao = mapper.toEntity(instalacaoDTO);
+        // 2. Converter DTO para Entity (MapStruct)
+        InstalacaoEntity entity = mapper.toEntity(dto);
+        entity.setImpressora(impressora);  // Associa a impressora
 
-        // 3. Associar a impressora
-        instalacao.setImpressora(impressora);
+        // 3. Salvar
+        InstalacaoEntity saved = instalacaoRepository.save(entity);
 
-        // 4. Salvar
-        return instalacaoRepository.save(instalacao);
+        // 4. Retornar DTO
+        return mapper.toResponseDTO(saved);
+    }
+
+    public List<InstalacaoResponseDTO> listarTodas() {
+        return mapper.toResponseDTOList(instalacaoRepository.findAll());
+    }
+
+    public InstalacaoResponseDTO buscarPorItemPedido(Integer itemPedido) {
+        InstalacaoEntity entity = instalacaoRepository.findByItemPedido(itemPedido)
+                .orElseThrow(() -> new EntityNotFoundException("Instalação não encontrada"));
+        return mapper.toResponseDTO(entity);
     }
 
     @Transactional
-    public InstalacaoEntity atualizarInstalacao(Integer itemPedido, InstalacaoDTO instalacaoDTO) {
-        // 1. Buscar instalação existente
-        InstalacaoEntity instalacao = instalacaoRepository.findByItemPedido(itemPedido)
-                .orElseThrow(() -> new EntityNotFoundException("Instalação com item pedido " + itemPedido + " não encontrada"));
+    public InstalacaoResponseDTO atualizar(Integer itemPedido, InstalacaoRequestDTO dto) {
+        InstalacaoEntity entity = instalacaoRepository.findByItemPedido(itemPedido)
+                .orElseThrow(() -> new EntityNotFoundException("Instalação não encontrada"));
 
-        // 2. Atualizar dados
-        instalacao.setLocalInstalacao(instalacaoDTO.localInstalacao());
-        instalacao.setRua(instalacaoDTO.rua());
-        instalacao.setNumero(instalacaoDTO.numero());
-        instalacao.setBairro(instalacaoDTO.bairro());
-        instalacao.setTransformador(instalacaoDTO.transformador());
-        instalacao.setResponsavelInstalacao(instalacaoDTO.responsavelInstalacao());
-        instalacao.setIp(instalacaoDTO.ip());
-        instalacao.setDataInstalacao(instalacaoDTO.dataInstalacao());
-        instalacao.setContadorInstalacao(instalacaoDTO.contadorInstalacao());
-        instalacao.setDataRetirada(instalacaoDTO.dataRetirada());
-        instalacao.setContadorRetirada(instalacaoDTO.contadorRetirada());
+        // Atualizar campos
+        entity.setLocalInstalacao(dto.localInstalacao());
+        entity.setRua(dto.rua());
+        entity.setNumero(dto.numero());
+        entity.setBairro(dto.bairro());
+        entity.setTransformador(dto.transformador());
+        entity.setResponsavelInstalacao(dto.responsavelInstalacao());
+        entity.setIp(dto.ip());
+        entity.setDataInstalacao(dto.dataInstalacao());
+        entity.setContadorInstalacao(dto.contadorInstalacao());
+        entity.setDataRetirada(dto.dataRetirada());
+        entity.setContadorRetirada(dto.contadorRetirada());
 
-        // 3. Atualizar impressora se necessário
-        if (instalacaoDTO.idImpressora() != null) {
-            ImpressoraEntity impressora = impressoraRepository.findById(instalacaoDTO.idImpressora())
-                    .orElseThrow(() -> new EntityNotFoundException("Impressora não encontrada"));
-            instalacao.setImpressora(impressora);
+        // Atualizar impressora se necessário
+        if (dto.idImpressora() != null) {
+            ImpressoraEntity impressora = impressoraService.buscarEntityPorId(dto.idImpressora());
+            entity.setImpressora(impressora);
         }
 
-        return instalacaoRepository.save(instalacao);
+        InstalacaoEntity updated = instalacaoRepository.save(entity);
+        return mapper.toResponseDTO(updated);
     }
 
     @Transactional
-    public void deletarInstalacao(Long id) {
+    public void deletar(Long id) {
         if (!instalacaoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Dados de instalação não encontrados!");
+            throw new EntityNotFoundException("Instalação não encontrada");
         }
         instalacaoRepository.deleteById(id);
-    }
-
-    public List<InstalacaoEntity> listarInstalacoes() {
-        return instalacaoRepository.findAll();
     }
 }

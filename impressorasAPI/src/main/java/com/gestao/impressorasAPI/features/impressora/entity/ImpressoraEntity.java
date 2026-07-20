@@ -1,7 +1,6 @@
 package com.gestao.impressorasAPI.features.impressora.entity;
 
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "Impressora")
+@Table(name = "impressora")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,9 +25,8 @@ public class ImpressoraEntity {
     @Column(nullable = false, unique = true)
     private String numeroSerie;
 
-    // Relação inversa: uma Impressora tem um Contador
+    // 👇 Lado "pai" - NÃO tem @JsonIgnore (vai serializar o contador)
     @OneToOne(mappedBy = "impressora", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private ContadorEntity contador;
-
 }

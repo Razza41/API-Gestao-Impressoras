@@ -6,9 +6,7 @@ public record ContadorResponseDTO(
         Long id,
         Integer contadorPB,
         Integer contadorColor,
-        LocalDate dataLeitura,
-        Long impressoraId,
-        String marcaModelo,
-        String numeroSerie
+        LocalDate dataLeitura
+        // ⚠️ SEM impressora aqui para evitar loop!
 ) {
 }

@@ -6,8 +6,6 @@ import com.gestao.impressorasAPI.features.impressora.entity.ContadorEntity;
 import com.gestao.impressorasAPI.features.impressora.entity.ImpressoraEntity;
 import com.gestao.impressorasAPI.features.impressora.mapper.ContadorMapper;
 import com.gestao.impressorasAPI.features.impressora.repository.ContadorRepository;
-import com.gestao.impressorasAPI.features.impressora.repository.ImpressoraRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,42 +16,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContadorService {
 
-    private final ContadorRepository repository;
+    private final ContadorRepository contadorRepository;
+    private final ImpressoraService impressoraService;
     private final ContadorMapper mapper;
-    private final ImpressoraRepository impressoraRepository;
 
     @Transactional
-    public ContadorResponseDTO cadastrarContador(ContadorRequestDTO contadorRequest) {
-        // 1. Buscar a impressora pelo ID
-        ImpressoraEntity impressora = impressoraRepository.findById(contadorRequest.impressoraId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Impressora com ID " + contadorRequest.impressoraId() + " não encontrada"
-                ));
+    public ContadorResponseDTO cadastrar(ContadorRequestDTO dto) {
+        // 1. Buscar impressora
+        ImpressoraEntity impressora = impressoraService.buscarEntityPorId(dto.impressoraId());
 
-        // 2. Verificar se já existe contador para esta impressora
+        // 2. Verificar se já existe contador
         if (impressora.getContador() != null) {
             throw new RuntimeException("Esta impressora já possui um contador cadastrado");
         }
 
-        // 3. Converter DTO para Entity (MapStruct já coloca a data automática)
-        ContadorEntity contador = mapper.toEntity(contadorRequest, impressora);
+        // 3. Converter DTO para Entity (MapStruct coloca data automática)
+        ContadorEntity entity = mapper.toEntity(dto, impressora);
 
         // 4. Salvar
-        ContadorEntity saved = repository.save(contador);
+        ContadorEntity saved = contadorRepository.save(entity);
 
-        // 5. Retornar DTO de resposta
+        // 5. Retornar DTO
         return mapper.toResponseDTO(saved);
     }
 
-    public List<ContadorResponseDTO> listarTodosContadores() {
-        return repository.findAll().stream()
+    public List<ContadorResponseDTO> listarTodos() {
+        return contadorRepository.findAll().stream()
                 .map(mapper::toResponseDTO)
                 .toList();
     }
 
-    public ContadorResponseDTO buscarContadorPorImpressora(Long impressoraId) {
-        ImpressoraEntity impressora = impressoraRepository.findById(impressoraId)
-                .orElseThrow(() -> new EntityNotFoundException("Impressora não encontrada"));
+    public ContadorResponseDTO buscarPorImpressoraId(Long impressoraId) {
+        ImpressoraEntity impressora = impressoraService.buscarEntityPorId(impressoraId);
 
         if (impressora.getContador() == null) {
             throw new RuntimeException("Esta impressora não possui contador cadastrado");

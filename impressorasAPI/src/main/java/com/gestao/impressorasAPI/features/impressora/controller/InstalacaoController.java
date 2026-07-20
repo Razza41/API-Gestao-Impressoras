@@ -1,8 +1,7 @@
 package com.gestao.impressorasAPI.features.impressora.controller;
 
-import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoDTO;
-import com.gestao.impressorasAPI.features.impressora.entity.ImpressoraEntity;
-import com.gestao.impressorasAPI.features.impressora.entity.InstalacaoEntity;
+import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoRequestDTO;
+import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoResponseDTO;
 import com.gestao.impressorasAPI.features.impressora.service.InstalacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,26 +12,36 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/instalacao")
+@RequestMapping("v1/instalacao")
 public class InstalacaoController {
 
     private final InstalacaoService service;
 
     @PostMapping
-    public ResponseEntity<InstalacaoEntity> postInstalacao(@Valid @RequestBody InstalacaoDTO instalacaoDTO){
-        InstalacaoEntity instalacao = service.cadastrarInstalacao(instalacaoDTO);
-        return ResponseEntity.ok().body(instalacao);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInstalacao(@Valid @PathVariable Long id){
-       service.deletarInstalacao(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<InstalacaoResponseDTO> post(@Valid @RequestBody InstalacaoRequestDTO dto) {
+        return ResponseEntity.ok(service.cadastrar(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<InstalacaoEntity>> getInstalacao(){
-        List<InstalacaoEntity> listaInstalacao = service.listarInstalacoes();
-        return ResponseEntity.ok(listaInstalacao);
+    public ResponseEntity<List<InstalacaoResponseDTO>> getAll() {
+        return ResponseEntity.ok(service.listarTodas());
+    }
+
+    @GetMapping("/item-pedido/{itemPedido}")
+    public ResponseEntity<InstalacaoResponseDTO> getByItemPedido(@PathVariable Integer itemPedido) {
+        return ResponseEntity.ok(service.buscarPorItemPedido(itemPedido));
+    }
+
+    @PutMapping("/{itemPedido}")
+    public ResponseEntity<InstalacaoResponseDTO> put(
+            @PathVariable Integer itemPedido,
+            @Valid @RequestBody InstalacaoRequestDTO dto) {
+        return ResponseEntity.ok(service.atualizar(itemPedido, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/impressorasAPI/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/impressorasAPI/src/main/java/com/gestao/impressorasAPI/features/impressora/mapper/ImpressoraMapper.java" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/impressorasAPI/src/main/java/com/gestao/impressorasAPI/features/impressora/mapper/ImpressoraMapper.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/impressorasAPI/src/main/java/com/gestao/impressorasAPI/features/impressora/service/ContadorService.java" charset="UTF-8" />
   </component>
 </project>
