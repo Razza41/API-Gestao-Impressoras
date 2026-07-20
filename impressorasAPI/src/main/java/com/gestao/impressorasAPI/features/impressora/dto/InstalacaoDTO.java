@@ -1,58 +1,48 @@
 package com.gestao.impressorasAPI.features.impressora.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gestao.impressorasAPI.features.impressora.entity.ImpressoraEntity;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-
-
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
-@Builder
 public record InstalacaoDTO(
-
-        @NotNull(message = "Item do pedido Ã© obrigatÃ³rio")
+        @NotNull(message = "Item do pedido é obrigatório")
+        @Positive(message = "Item do pedido deve ser positivo")
         Integer itemPedido,
 
-        @NotBlank(message = "Local de instalaÃ§Ã£o Ã© obrigatÃ³rio")
+        @NotNull(message = "Local de instalação é obrigatório")
         String localInstalacao,
 
+        @NotNull(message = "Rua é obrigatória")
         String rua,
 
+        @NotNull(message = "Número é obrigatório")
+        @Positive(message = "Número deve ser positivo")
         Integer numero,
 
+        @NotNull(message = "Bairro é obrigatório")
         String bairro,
 
         String transformador,
 
-        @NotBlank(message = "ResponsÃ¡vel de instalaÃ§Ã£o Ã© obrigatÃ³rio")
+        @NotNull(message = "Responsável pela instalação é obrigatório")
         String responsavelInstalacao,
 
-        @NotBlank(message = "Informe o IP/Rede da impressora")
+        @NotNull(message = "IP é obrigatório")
         String ip,
 
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        @NotNull(message = "Informe a data de instalaÃ§Ã£o")
+        @NotNull(message = "Data de instalação é obrigatória")
         LocalDate dataInstalacao,
 
-        @NotNull(message = "Informe o contador atual da impressora")
+        @NotNull(message = "Contador de instalação é obrigatório")
         Integer contadorInstalacao,
 
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        @NotNull(message = "Informe a data de retirada")
+        @NotNull(message = "Data de retirada é obrigatória")
         LocalDate dataRetirada,
 
-        @NotNull(message = "Informe o contador de retirada da impressora")
-        Integer contadorRetirada
+        @NotNull(message = "Contador de retirada é obrigatório")
+        Integer contadorRetirada,
 
-        /**
-        @NotNull(message = "Informe o ID do tipo de impressora que serÃ¡ instalada!")
-        Long id_impressora
-        */
+        @NotNull(message = "ID da impressora é obrigatório")
+        Long idImpressora
 ) {
 }

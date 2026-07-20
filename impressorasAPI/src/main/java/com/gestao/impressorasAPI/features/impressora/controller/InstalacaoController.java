@@ -32,7 +32,7 @@ public class InstalacaoController {
 
     @GetMapping
     public ResponseEntity<List<InstalacaoEntity>> getInstalacao(){
-        List<InstalacaoEntity> listaInstalacao = service.listarImpressoras();
+        List<InstalacaoEntity> listaInstalacao = service.listarInstalacoes();
         return ResponseEntity.ok(listaInstalacao);
     }
 }

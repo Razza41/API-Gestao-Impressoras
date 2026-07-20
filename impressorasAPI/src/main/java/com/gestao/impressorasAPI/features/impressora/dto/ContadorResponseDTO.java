@@ -2,10 +2,13 @@ package com.gestao.impressorasAPI.features.impressora.dto;
 
 import java.time.LocalDate;
 
-public record ContadorDTO(
+public record ContadorResponseDTO(
+        Long id,
         Integer contadorPB,
         Integer contadorColor,
         LocalDate dataLeitura,
-        Long impressora //id da impressora vinculada ao contador
+        Long impressoraId,
+        String marcaModelo,
+        String numeroSerie
 ) {
 }

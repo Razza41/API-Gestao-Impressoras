@@ -4,10 +4,14 @@ import com.gestao.impressorasAPI.features.impressora.dto.InstalacaoDTO;
 import com.gestao.impressorasAPI.features.impressora.entity.InstalacaoEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
+@Mapper(componentModel = "spring")
+public interface InstalacaoMapper {
 
-@Mapper (componentModel = "spring")  /*faz com que ao criar a implementaÃ§Ã£o, jÃ¡ venha com a injeÃ§Ã£o de dependÃªncias */
-public interface InstalacaoMapper{
+    InstalacaoMapper INSTANCE = Mappers.getMapper(InstalacaoMapper.class);
+
     @Mapping(target = "id", ignore = true)
-    InstalacaoEntity toEntity(InstalacaoDTO instalacaoDTO); //para o mapper funcionar, o nome das variÃ¡veis de Entity e DTO precisam ser iguais
+    @Mapping(target = "impressora", ignore = true) // Será setado no Service
+    InstalacaoEntity toEntity(InstalacaoDTO dto);
 }
