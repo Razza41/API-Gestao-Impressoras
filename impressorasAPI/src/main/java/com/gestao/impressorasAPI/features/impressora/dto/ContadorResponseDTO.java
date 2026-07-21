@@ -7,6 +7,5 @@ public record ContadorResponseDTO(
         Integer contadorPB,
         Integer contadorColor,
         LocalDate dataLeitura
-        // ⚠️ SEM impressora aqui para evitar loop!
 ) {
 }

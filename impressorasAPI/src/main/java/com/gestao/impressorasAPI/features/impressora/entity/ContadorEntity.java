@@ -33,11 +33,11 @@ public class ContadorEntity {
     @NotNull(message = "Data de leitura não pode ser nula")
     private LocalDate dataLeitura;
 
-    // 👇 Lado "filho" - TEM @JsonIgnore (NÃO serializa a impressora)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_impressora_fk", nullable = false, unique = true,
+    // Lado "filho" - TEM @JsonIgnore (NÃO serializa a impressora)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_impressora_fk", nullable = false,
             foreignKey = @ForeignKey(name = "fk_contador_impressora"))
     @NotNull(message = "Impressora não pode ser nula")
-    @JsonIgnore  // ← IMPEDE O LOOP!
+    @JsonIgnore
     private ImpressoraEntity impressora;
 }

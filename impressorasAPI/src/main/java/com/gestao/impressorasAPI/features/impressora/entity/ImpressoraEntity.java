@@ -1,11 +1,15 @@
 package com.gestao.impressorasAPI.features.impressora.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "impressora")
@@ -25,8 +29,10 @@ public class ImpressoraEntity {
     @Column(nullable = false, unique = true)
     private String numeroSerie;
 
-    // 👇 Lado "pai" - NÃO tem @JsonIgnore (vai serializar o contador)
-    @OneToOne(mappedBy = "impressora", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "impressora", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private ContadorEntity contador;
+    @JsonIgnore
+    @Builder.Default
+    private List<ContadorEntity> contadores = new ArrayList<>();
 }

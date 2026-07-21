@@ -7,10 +7,12 @@ import com.gestao.impressorasAPI.features.impressora.entity.ImpressoraEntity;
 import com.gestao.impressorasAPI.features.impressora.mapper.ContadorMapper;
 import com.gestao.impressorasAPI.features.impressora.repository.ContadorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -20,39 +22,93 @@ public class ContadorService {
     private final ImpressoraService impressoraService;
     private final ContadorMapper mapper;
 
+
+    // cadastrar nova leitura
+
     @Transactional
     public ContadorResponseDTO cadastrar(ContadorRequestDTO dto) {
-        // 1. Buscar impressora
+        // 1. Buscar a impressora
         ImpressoraEntity impressora = impressoraService.buscarEntityPorId(dto.impressoraId());
 
-        // 2. Verificar se já existe contador
-        if (impressora.getContador() != null) {
-            throw new RuntimeException("Esta impressora já possui um contador cadastrado");
-        }
+        // 2. Criar o contador
+        ContadorEntity entity = new ContadorEntity();
+        entity.setContadorPB(dto.contadorPB());
+        entity.setContadorColor(dto.contadorColor());
+        entity.setDataLeitura(LocalDate.now());
+        entity.setImpressora(impressora);
 
-        // 3. Converter DTO para Entity (MapStruct coloca data automática)
-        ContadorEntity entity = mapper.toEntity(dto, impressora);
+        // 3. Adicionar à lista da impressora (para manter a relação)
+        impressora.getContadores().add(entity);
 
-        // 4. Salvar
-        ContadorEntity saved = contadorRepository.save(entity);
+        // 4. Salvar (cascade salva o contador também)
+        impressoraService.salvarEntity(impressora);
 
-        // 5. Retornar DTO
-        return mapper.toResponseDTO(saved);
+        // 5. Retornar o DTO
+        return mapper.toResponseDTO(entity);
     }
 
-    public List<ContadorResponseDTO> listarTodos() {
-        return contadorRepository.findAll().stream()
-                .map(mapper::toResponseDTO)
-                .toList();
+//buscar contador por ID
+    public ContadorResponseDTO buscarPorId(Long id) {
+        ContadorEntity entity = contadorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contador não encontrado com ID: " + id));
+        return mapper.toResponseDTO(entity);
     }
 
-    public ContadorResponseDTO buscarPorImpressoraId(Long impressoraId) {
-        ImpressoraEntity impressora = impressoraService.buscarEntityPorId(impressoraId);
+   //listar contadores pela impressora
+    public Page<ContadorResponseDTO> listarPorImpressora(Long impressoraId, Pageable pageable) {
+        // Verifica se a impressora existe
+        impressoraService.buscarEntityPorId(impressoraId);
 
-        if (impressora.getContador() == null) {
-            throw new RuntimeException("Esta impressora não possui contador cadastrado");
+        return contadorRepository.findByImpressoraId(impressoraId, pageable)
+                .map(mapper::toResponseDTO);
+    }
+
+//buscar o ultimo contador da impressora
+    public ContadorResponseDTO buscarUltimoPorImpressora(Long impressoraId) {
+        // Verifica se a impressora existe
+        impressoraService.buscarEntityPorId(impressoraId);
+
+        ContadorEntity ultimo = contadorRepository
+                .findTopByImpressoraIdOrderByDataLeituraDesc(impressoraId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Esta impressora não possui contadores cadastrados"
+                ));
+
+        return mapper.toResponseDTO(ultimo);
+    }
+
+  //buscar historico total da impressora com paginação
+    public Page<ContadorResponseDTO> buscarHistorico(Long impressoraId, Pageable pageable) {
+        // Verifica se a impressora existe
+        impressoraService.buscarEntityPorId(impressoraId);
+
+        return contadorRepository.findByImpressoraId(impressoraId, pageable)
+                .map(mapper::toResponseDTO);
+    }
+
+   //verifica se existe contador para a impressora
+    public boolean existeContador(Long impressoraId) {
+        // Verifica se a impressora existe
+        impressoraService.buscarEntityPorId(impressoraId);
+
+        return contadorRepository.existsByImpressoraId(impressoraId);
+    }
+
+   //deletar contador pelo ID
+    @Transactional
+    public void deletar(Long id) {
+        if (!contadorRepository.existsById(id)) {
+            throw new RuntimeException("Contador não encontrado com ID: " + id);
         }
+        contadorRepository.deleteById(id);
+    }
 
-        return mapper.toResponseDTO(impressora.getContador());
+  //deletar todos os contadores de uma impressora pelo ID
+    @Transactional
+    public void deletarTodosPorImpressora(Long impressoraId) {
+        // Verifica se a impressora existe
+        impressoraService.buscarEntityPorId(impressoraId);
+
+        contadorRepository.deleteByImpressoraId(impressoraId);
     }
 }

@@ -27,6 +27,7 @@ public class ImpressoraController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+
     @GetMapping("/numero-serie/{numeroSerie}")
     public ResponseEntity<ImpressoraResponseDTO> getByNumeroSerie(@PathVariable String numeroSerie) {
         return ResponseEntity.ok(service.buscarPorNumeroSerie(numeroSerie));

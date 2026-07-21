@@ -9,23 +9,29 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ContadorMapper.class})
+@Mapper(componentModel = "spring")
 public interface ImpressoraMapper {
 
     ImpressoraMapper INSTANCE = Mappers.getMapper(ImpressoraMapper.class);
 
-    // 👇 Request → Entity
+    // ============================================================
+    // 1. Request → Entity
+    // ============================================================
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "contador", ignore = true)  // Contador será criado separadamente
+    @Mapping(target = "contadores", ignore = true)
     ImpressoraEntity toEntity(ImpressoraRequestDTO dto);
 
-    // 👇 Entity → Response (com contador)
+    // ============================================================
+    // 2. Entity → Response (SEM contador)
+    // ============================================================
     @Mapping(target = "id", source = "id")
     @Mapping(target = "marcaModelo", source = "marcaModelo")
     @Mapping(target = "numeroSerie", source = "numeroSerie")
-    @Mapping(target = "contador", source = "contador")
+    // ⚠️ NÃO MAPEIA "ultimoContador" - será setado no Service
     ImpressoraResponseDTO toResponseDTO(ImpressoraEntity entity);
 
-    // 👇 Para conversão da lista
+    // ============================================================
+    // 3. Lista Entity → Lista Response
+    // ============================================================
     List<ImpressoraResponseDTO> toResponseDTOList(List<ImpressoraEntity> entities);
 }

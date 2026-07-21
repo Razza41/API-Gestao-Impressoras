@@ -16,6 +16,6 @@ public record InstalacaoResponseDTO(
         Integer contadorInstalacao,
         LocalDate dataRetirada,
         Integer contadorRetirada,
-        ImpressoraResponseDTO impressora  // 👈 Contém a impressora, sem referência de volta
+        ImpressoraResponseDTO impressora  //  Contém a impressora, sem referência de volta
 ) {
 }
