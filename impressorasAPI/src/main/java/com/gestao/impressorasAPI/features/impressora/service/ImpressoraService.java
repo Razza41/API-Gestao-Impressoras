@@ -23,20 +23,16 @@ public class ImpressoraService {
     private final ImpressoraMapper mapper;
     private final ContadorRepository contadorRepository;
 
-    // ============================================================
-    // LISTAR TODAS AS IMPRESSORAS COM O ÚLTIMO CONTADOR
-    // ============================================================
+    // listar todas as impressaras com o contador atual
     public List<ImpressoraResponseDTO> listarTodas() {
         List<ImpressoraEntity> impressoras = repository.findAll();
 
         return impressoras.stream()
-                .map(this::toResponseDTOComUltimoContador)  // ← NOME CORRIGIDO
+                .map(this::toResponseDTOComUltimoContador)
                 .collect(Collectors.toList());
     }
 
-    // ============================================================
-    // BUSCAR IMPRESSORA POR ID COM O ÚLTIMO CONTADOR
-    // ============================================================
+   //buscar impressora por ID
     public ImpressoraResponseDTO buscarPorId(Long id) {
         ImpressoraEntity impressora = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Impressora não encontrada"));
@@ -44,9 +40,7 @@ public class ImpressoraService {
         return toResponseDTOComUltimoContador(impressora);
     }
 
-    // ============================================================
-    // BUSCAR IMPRESSORA POR NÚMERO DE SÉRIE
-    // ============================================================
+  //buscar impressora por numero de serie
     public ImpressoraResponseDTO buscarPorNumeroSerie(String numeroSerie) {
         ImpressoraEntity impressora = repository.findByNumeroSerie(numeroSerie)
                 .orElseThrow(() -> new EntityNotFoundException("Impressora com número de série " + numeroSerie + " não encontrada"));
@@ -54,9 +48,7 @@ public class ImpressoraService {
         return toResponseDTOComUltimoContador(impressora);
     }
 
-    // ============================================================
-    // MÉTODO PRIVADO: CONVERTE ENTITY PARA DTO COM ÚLTIMO CONTADOR
-    // ============================================================
+  //metodo privado: converte entity para DTO mostrando o contador atual
     private ImpressoraResponseDTO toResponseDTOComUltimoContador(ImpressoraEntity impressora) {
         // 1. Converte a impressora para DTO (sem contador)
         ImpressoraResponseDTO dto = mapper.toResponseDTO(impressora);
@@ -81,9 +73,7 @@ public class ImpressoraService {
         );
     }
 
-    // ============================================================
-    // MÉTODOS INTERNOS (para outros services)
-    // ============================================================
+    //busca entidade por ID (metodo interno)
     public ImpressoraEntity buscarEntityPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Impressora não encontrada"));
@@ -94,6 +84,7 @@ public class ImpressoraService {
         return repository.save(entity);
     }
 
+    //cadastras impressora
     @Transactional
     public ImpressoraResponseDTO cadastrar(ImpressoraRequestDTO dto) {
         ImpressoraEntity entity = mapper.toEntity(dto);
@@ -101,10 +92,17 @@ public class ImpressoraService {
         return buscarPorId(saved.getId());
     }
 
+    // Atualiza a impressora
     @Transactional
     public ImpressoraResponseDTO atualizar(Long id, ImpressoraRequestDTO dto) {
         ImpressoraEntity entity = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Impressora não encontrada"));
+
+        repository.findByNumeroSerie(dto.numeroSerie())
+                .filter(outra -> !outra.getId().equals(id))
+                .ifPresent(outra -> {
+                    throw new IllegalArgumentException("Já existe uma impressora com o número de série informado");
+                });
 
         entity.setMarcaModelo(dto.marcaModelo());
         entity.setNumeroSerie(dto.numeroSerie());
@@ -113,6 +111,7 @@ public class ImpressoraService {
         return buscarPorId(updated.getId());
     }
 
+    //deleta a impressora
     @Transactional
     public void deletar(Long id) {
         if (!repository.existsById(id)) {
