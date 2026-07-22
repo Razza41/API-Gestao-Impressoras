@@ -12,26 +12,22 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ImpressoraMapper {
 
+
     ImpressoraMapper INSTANCE = Mappers.getMapper(ImpressoraMapper.class);
 
-    // ============================================================
-    // 1. Request → Entity
-    // ============================================================
+
+    // converte entidade para dto
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "contadores", ignore = true)
     ImpressoraEntity toEntity(ImpressoraRequestDTO dto);
 
-    // ============================================================
-    // 2. Entity → Response (SEM contador)
-    // ============================================================
+
     @Mapping(target = "id", source = "id")
     @Mapping(target = "marcaModelo", source = "marcaModelo")
     @Mapping(target = "numeroSerie", source = "numeroSerie")
-    // ⚠️ NÃO MAPEIA "ultimoContador" - será setado no Service
+    //não mapeia "ultimoContador" - será setado no Service
     ImpressoraResponseDTO toResponseDTO(ImpressoraEntity entity);
 
-    // ============================================================
-    // 3. Lista Entity → Lista Response
-    // ============================================================
+//converte lista de entidades para response
     List<ImpressoraResponseDTO> toResponseDTOList(List<ImpressoraEntity> entities);
 }

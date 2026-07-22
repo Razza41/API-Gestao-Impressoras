@@ -14,16 +14,16 @@ public interface InstalacaoMapper {
 
     InstalacaoMapper INSTANCE = Mappers.getMapper(InstalacaoMapper.class);
 
-    // 👇 Request → Entity (impressora será setada no Service)
+    // transforma Request para Entity (impressora será setada no Service)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "impressora", ignore = true)  // Será setada no Service
     InstalacaoEntity toEntity(InstalacaoRequestDTO dto);
 
-    // 👇 Entity → Response (com impressora)
+    //transforma Entity para Response (com impressora)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "impressora", source = "impressora")
     InstalacaoResponseDTO toResponseDTO(InstalacaoEntity entity);
 
-    // 👇 Para conversão da lista
+    //  Para conversão da lista de entidades para response
     List<InstalacaoResponseDTO> toResponseDTOList(List<InstalacaoEntity> entities);
 }
